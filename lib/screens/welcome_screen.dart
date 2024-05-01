@@ -42,7 +42,9 @@ class WelcomeScreen extends StatelessWidget {
             ),
             Padding(
             padding: const EdgeInsets.all(20.0),
-            child: CustomElevatedButton(onPressed: () {}, text: "Register", backgroundColor: AppColors.primaryColor,),
+            child: CustomElevatedButton(onPressed: () {
+               Navigator.pushNamed(context, WelcomeScreen.id);
+            }, text: "Register", backgroundColor: AppColors.primaryColor,),
             ),
              
           ],

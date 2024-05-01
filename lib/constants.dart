@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class AppColors {
   static const Color primaryColor = Color.fromARGB(255, 155, 108, 247);
@@ -46,6 +47,7 @@ class CustomTextField extends StatelessWidget {
   final String value;
   final ValueChanged<String> onChanged;
   final String placeholder;
+  final double height;
 
   const CustomTextField({
     super.key,
@@ -53,6 +55,7 @@ class CustomTextField extends StatelessWidget {
     required this.value,
     required this.onChanged,
     required this.placeholder,
+     required this.height,
   });
 
   @override
@@ -64,18 +67,21 @@ class CustomTextField extends StatelessWidget {
           label,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        TextField(
-          decoration: InputDecoration(
-            fillColor: const Color.fromARGB(255, 237, 237, 237),
-            filled: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: BorderSide.none,
+        SizedBox(
+          height: height,
+          child: TextField(
+            decoration: InputDecoration(
+              fillColor: const Color.fromARGB(255, 237, 237, 237),
+              filled: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide.none,
+              ),
+              hintText: placeholder,
             ),
-            hintText: placeholder,
+            onChanged: onChanged,
+            controller: TextEditingController(text: value),
           ),
-          onChanged: onChanged,
-          controller: TextEditingController(text: value),
         ),
       ],
     );

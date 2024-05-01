@@ -23,13 +23,14 @@ class _LoginScreenState extends State<LoginScreen> {
             Hero(
               tag: 'logo',
               child: SizedBox(
-                height: 200.0,
+                height: 150.0,
                 child: Image.asset("assets/logo.png"),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
+              padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 0.0),
               child: CustomTextField(
+                height: 50,
                 label: "Email",
                 value: "",
                 onChanged: (value) {},
@@ -37,8 +38,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
+              padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
               child: CustomTextField(
+                height: 50,
                 label: "Password",
                 value: "",
                 onChanged: (value) {},
@@ -47,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
-              child: CustomElevatedButton(onPressed: () {}, text: "Login", backgroundColor: Colors.blue,),
+              child: CustomElevatedButton(onPressed: () {}, text: "Login", backgroundColor: AppColors.hintColor,),
             ),
           ],
         ),
