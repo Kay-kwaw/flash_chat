@@ -1,3 +1,4 @@
+import 'package:flash_chat/constants.dart';
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -6,6 +7,24 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                SizedBox(
+                  height: 60.0,
+                  child: Image.asset(''),
+                ),
+                const Text('We Chat')
+              ],
+            )
+          ],
+        )),
+    );
   }
 }
