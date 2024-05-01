@@ -14,18 +14,30 @@ class WelcomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                SizedBox(
-                  height: 60.0,
-                  child: Image.asset("assets/logo.png"),
-                ),
-                const Text('We Chat', style: TextStyle(
-                  fontSize: 45,
-                  color: Colors.black
-                ))
-              ],
-            )
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                children: [
+                  SizedBox(
+                    height: 60.0,
+                    child: Image.asset("assets/logo.png"),
+                  ),
+                  const Text('We Chat', style: TextStyle(
+                    fontSize: 45,
+                    color: Colors.black
+                  ))
+                ],
+              ),
+            ),
+            Padding(
+            padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
+            child: CustomElevatedButton(onPressed: () {}, text: "Login", backgroundColor: AppColors.hintColor,),
+            ),
+            Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: CustomElevatedButton(onPressed: () {}, text: "Register", backgroundColor: AppColors.primaryColor,),
+            ),
+             
           ],
         )),
     );
