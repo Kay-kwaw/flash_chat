@@ -18,9 +18,12 @@ class WelcomeScreen extends StatelessWidget {
               children: [
                 SizedBox(
                   height: 60.0,
-                  child: Image.asset(''),
+                  child: Image.asset("assets/logo.png"),
                 ),
-                const Text('We Chat')
+                const Text('We Chat', style: TextStyle(
+                  fontSize: 45,
+                  color: Colors.black
+                ))
               ],
             )
           ],
