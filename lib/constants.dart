@@ -40,3 +40,44 @@ class CustomElevatedButton extends StatelessWidget {
     );
   }
 }
+
+class CustomTextField extends StatelessWidget {
+  final String label;
+  final String value;
+  final ValueChanged<String> onChanged;
+  final String placeholder;
+
+  const CustomTextField({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.onChanged,
+    required this.placeholder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        TextField(
+          decoration: InputDecoration(
+            fillColor: const Color.fromARGB(255, 237, 237, 237),
+            filled: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: BorderSide.none,
+            ),
+            hintText: placeholder,
+          ),
+          onChanged: onChanged,
+          controller: TextEditingController(text: value),
+        ),
+      ],
+    );
+  }
+}
