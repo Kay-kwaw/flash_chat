@@ -2,6 +2,7 @@ import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flash_chat/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -24,6 +25,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
       vsync: this,
       //This is use to reference the state object
     );
+    //This is use to start the animation and it will start from the beginning and rebuild the widget
+    controller!.forward();
+    //This is use to listen to the animation and it will rebuild the widget
+    controller!.addListener(() {
+      setState(() {
+        
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
@@ -33,22 +42,27 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+          children: <Widget> [
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(0.0),
               child: Row(
                 children: [
                   Hero(
                     tag: 'logo',
                     child: SizedBox(
-                      height: 60.0,
+                      height: controller!.value * 90.0,
                       child: Image.asset("assets/logo.png"),
                     ),
                   ),
-                  const Text('We Chat', style: TextStyle(
-                    fontSize: 45,
-                    color: Colors.black
-                  ))
+                  AnimatedTextKit(animatedTexts: [
+                    TypewriterAnimatedText(
+                      'Flash Chat',
+                      textStyle: const TextStyle(
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.black,
+                      ),)
+                  ])
                 ],
               ),
             ),
