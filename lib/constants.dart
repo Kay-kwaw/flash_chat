@@ -48,6 +48,8 @@ class CustomTextField extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final String placeholder;
   final double height;
+  final bool? obscureText;
+  final TextInputType? keyboardType;
 
   const CustomTextField({
     super.key,
@@ -55,7 +57,9 @@ class CustomTextField extends StatelessWidget {
     required this.value,
     required this.onChanged,
     required this.placeholder,
-     required this.height,
+    required this.height,
+    this.obscureText,
+    this.keyboardType,
   });
 
   @override
@@ -79,8 +83,10 @@ class CustomTextField extends StatelessWidget {
               ),
               hintText: placeholder,
             ),
+            obscureText: obscureText ?? false,
             onChanged: onChanged,
             controller: TextEditingController(text: value),
+            keyboardType: keyboardType,
           ),
         ),
       ],
