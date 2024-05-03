@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
+import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -10,6 +12,8 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  //authentication instance using firebase, and we use final because we are never going to change it, so this instance is basically to authenticate users.
+  final _auth = FirebaseAuth.instance;
   late String email;
   late String password;
   @override
@@ -56,9 +60,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
-              child: CustomElevatedButton(onPressed: () {
-                print(email);
-                print(password);
+              child: CustomElevatedButton(onPressed: () async {
+                // print(email);
+                // print(password);
+                //In order to register the user, we tap into the _auth instance created. Now the createUserWithEmailandPassword returns a future so we encapsulate it with a final
+                //NB. this can fail so we wrap it with the try and catch
+                try {
+                  final newUser = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+                  if (newUser != null) {
+                    Navigator.pushNamed(context, ChatScreen.id);
+                  }
+                } catch(e){
+                  print(e);
+                }
+                
+
               }, text: "Login", backgroundColor: AppColors.primaryColor,),
             ),
           ],
