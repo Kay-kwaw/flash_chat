@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_cloud_firestore/firebase_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+final _firestore = FirebaseFirestore.instance;
+User? loggedInUser;
+
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
   static const String id = 'chat_screen';
@@ -12,9 +15,9 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   //instance of our cloud firestore
-  final _firestore = FirebaseFirestore.instance;
+  final messageTextEditingController = TextEditingController();
   final _auth = FirebaseAuth.instance;
-  User? loggedInUser;
+  
   late String messageText;
 
    @override
@@ -65,11 +68,10 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.close),
-            onPressed: () {
-              messagesStream();
+            onPressed: () { 
               //Implement logout functionality
-              // _auth.signOut();
-              // Navigator.pop(context);
+              _auth.signOut();
+              Navigator.pop(context);
             },
           ),
         ],
@@ -81,33 +83,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            StreamBuilder<QuerySnapshot>(
-              //The Stream is actually where the data is coming from
-              stream: _firestore.collection('messages').snapshots(), 
-              builder: (context, snapshot) {
-                // we first check if the snapshot is empty
-                if(snapshot.hasData) {
-                  //The asych snapshot contains a query snapshot from the cloud firestore,we access the querysnapshot through the data property and then access the docs property!
-                  final messages = snapshot.data?.docs;
-                  List<Text> messageWidgets = [];
-                    //This is use to loop through the data gotten from the cloud firestore
-                    for (var message in messages!) {
-                      final messageText = message.get('text');
-                      final messageSender = message.get('sender');
-                      final messageWidget = Text('$messageText from $messageSender');
-                      messageWidgets.add(messageWidget);
-                    }
-                    return Column(
-                  children: messageWidgets,
-                );
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-              
-              ),
+            MessageStream(),
             Container(
               decoration: const BoxDecoration(
                 border: Border(
@@ -119,6 +95,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: <Widget>[
                   Expanded(
                     child: TextField(
+                      controller: messageTextEditingController,
                       onChanged: (value) {
                         messageText = value;
                       },
@@ -133,6 +110,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     onPressed: () {
                       //messageText + loggedInUser.email
                       //This basically sends the message to the cloud firestore
+                      messageTextEditingController.clear();
                      _firestore.collection('messages').add({
                        'text': messageText,
                        'sender': loggedInUser!.email,
@@ -154,6 +132,105 @@ class _ChatScreenState extends State<ChatScreen> {
             
           ],
         ),
+      ),
+    );
+  }
+}
+
+class MessageStream extends StatelessWidget {
+  const MessageStream({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+              //The Stream is actually where the data is coming from
+              stream: _firestore.collection('messages').snapshots(), 
+              builder: (context, snapshot) {
+                // we first check if the snapshot is empty
+                if(snapshot.hasData) {
+                  //The asych snapshot contains a query snapshot from the cloud firestore,we access the querysnapshot through the data property and then access the docs property!
+                  final messages = snapshot.data?.docs.reversed;
+                  List<MessageBubble> messageBubbles = [];
+                    //This is use to loop through the data gotten from the cloud firestore
+                    for (var message in messages!) {
+                      final messageText = message.get('text');
+                      final messageSender = message.get('sender');
+
+                      final currentUser = loggedInUser?.email;
+
+                      if (currentUser == messageSender){
+                        //This means the message is going to from the login user
+                      }
+
+                      final messageBubble = MessageBubble(
+                        sender: messageSender, 
+                        text: messageText,
+                        isMe: currentUser == messageSender,
+                        );
+                      messageBubbles.add(messageBubble);
+                    }
+                    return Expanded(
+                      child: ListView(
+                        reverse: true,
+                        children: messageBubbles,
+                        ),
+                    );
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+              
+       );
+  }
+}
+
+
+class MessageBubble extends StatelessWidget {
+
+  MessageBubble({required this.sender, required this.text, required this.isMe});
+  
+  final String sender;
+  final String text;
+  final loggedInUser = FirebaseAuth.instance.currentUser;
+  bool isMe;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: Column(
+        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Text(sender , style: const TextStyle(
+            fontSize: 8.0,
+            color: Color.fromARGB(137, 62, 61, 61),
+          )),
+          Material(
+            borderRadius: isMe ? const BorderRadius.only(
+              topLeft: Radius.circular(30),
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
+            ) : const BorderRadius.only(
+              topRight: Radius.circular(30),
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30)
+
+
+            ),
+            elevation: 20,
+            color: isMe ? Colors.lightBlue : Colors.grey,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20.0),
+              child: Text(text, style: TextStyle(
+                          fontSize: sender == loggedInUser!.email ? 12.0 : 8.0,
+                          color: isMe ? Colors.white : Colors.black,
+                          )
+                          ),
+            ),
+          ),
+        ],
       ),
     );
   }
