@@ -48,6 +48,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void messagesStream() async {
     //This is use to get the data from the cloud firestore
+    //NB The snapshot is a stream of data gotten from the cloud firestore
     await for (var snapshot in _firestore.collection('messages').snapshots()) {
       //This is use to loop through the data gotten from the cloud firestore
       for (var message in snapshot.docs) {
@@ -80,6 +81,33 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            StreamBuilder<QuerySnapshot>(
+              //The Stream is actually where the data is coming from
+              stream: _firestore.collection('messages').snapshots(), 
+              builder: (context, snapshot) {
+                // we first check if the snapshot is empty
+                if(snapshot.hasData) {
+                  //The asych snapshot contains a query snapshot from the cloud firestore,we access the querysnapshot through the data property and then access the docs property!
+                  final messages = snapshot.data?.docs;
+                  List<Text> messageWidgets = [];
+                    //This is use to loop through the data gotten from the cloud firestore
+                    for (var message in messages!) {
+                      final messageText = message.get('text');
+                      final messageSender = message.get('sender');
+                      final messageWidget = Text('$messageText from $messageSender');
+                      messageWidgets.add(messageWidget);
+                    }
+                    return Column(
+                  children: messageWidgets,
+                );
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+              
+              ),
             Container(
               decoration: const BoxDecoration(
                 border: Border(
