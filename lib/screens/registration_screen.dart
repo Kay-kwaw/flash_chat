@@ -17,6 +17,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _auth = FirebaseAuth.instance;
   late String email;
   late String password;
+  bool isLoading = false; 
 
 
 
@@ -65,25 +66,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
-              child: CustomElevatedButton(onPressed: () async {
-                // print(email);
-                // print(password);
-                //In order to register the user, we tap into the _auth instance created. Now the createUserWithEmailandPassword returns a future so we encapsulate it with a final
-                //NB. this can fail so we wrap it with the try and catch
-                try {
-                  final newUser = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-                  if (newUser != null) {
-                    Navigator.pushNamed(context, ChatScreen.id);
+              child: isLoading ? const CircularProgressIndicator() // Show CircularProgressIndicator when loading
+                : CustomElevatedButton(onPressed: () async {
+                  // print(email);
+                  // print(password);
+                  //In order to register the user, we tap into the _auth instance created. Now the createUserWithEmailandPassword returns a future so we encapsulate it with a final
+                  //NB. this can fail so we wrap it with the try and catch
+                  try {
+                    final newUser = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+                    if (newUser != null) {
+                      Navigator.pushNamed(context, ChatScreen.id);
+                    }
+                  } catch(e){
+                    if (kDebugMode) {
+                      print(e);
+                    }
                   }
-                } catch(e){
-                  if (kDebugMode) {
-                    print(e);
-                  }
-                }
+                  
                 
-
-              }, text: "Register", backgroundColor: AppColors.primaryColor,),
-            ),
+                }, text: "Register", backgroundColor: AppColors.primaryColor,),
+              ),
+              // Padding(),
           ],
         ),
       ),
