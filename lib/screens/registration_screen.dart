@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/screens/chat_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -16,6 +17,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _auth = FirebaseAuth.instance;
   late String email;
   late String password;
+
+
+
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,11 +76,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     Navigator.pushNamed(context, ChatScreen.id);
                   }
                 } catch(e){
-                  print(e);
+                  if (kDebugMode) {
+                    print(e);
+                  }
                 }
                 
 
-              }, text: "Login", backgroundColor: AppColors.primaryColor,),
+              }, text: "Register", backgroundColor: AppColors.primaryColor,),
             ),
           ],
         ),
