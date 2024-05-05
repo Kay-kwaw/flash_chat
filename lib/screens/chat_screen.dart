@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_cloud_firestore/firebase_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -10,8 +11,11 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  //instance of our cloud firestore
+  final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
-   User? loggedInUser;
+  User? loggedInUser;
+  late String messageText;
 
    @override
    void initState() {
@@ -32,6 +36,25 @@ class _ChatScreenState extends State<ChatScreen> {
       print(e);
     }
   }
+  //This is not a good method because we always have to pull data from the cloud firestore
+  // void getMessages() async {
+  //   //This is use to get the data from the cloud firestore
+  //   final messages = await _firestore.collection('messages').get();
+  //   //This is use to loop through the data gotten from the cloud firestore
+  //   for (var message in messages.docs) {
+  //     print(message.data());
+  //   }
+  // }
+
+  void messagesStream() async {
+    //This is use to get the data from the cloud firestore
+    await for (var snapshot in _firestore.collection('messages').snapshots()) {
+      //This is use to loop through the data gotten from the cloud firestore
+      for (var message in snapshot.docs) {
+        print(message.data());
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,9 +65,10 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton(
             icon: const Icon(Icons.close),
             onPressed: () {
+              messagesStream();
               //Implement logout functionality
-              _auth.signOut();
-              Navigator.pop(context);
+              // _auth.signOut();
+              // Navigator.pop(context);
             },
           ),
         ],
@@ -68,7 +92,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   Expanded(
                     child: TextField(
                       onChanged: (value) {
-                        //Do something with the user input.
+                        messageText = value;
                       },
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
@@ -79,7 +103,12 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      //Implement send functionality.
+                      //messageText + loggedInUser.email
+                      //This basically sends the message to the cloud firestore
+                     _firestore.collection('messages').add({
+                       'text': messageText,
+                       'sender': loggedInUser!.email,
+                     });
                     },
                     child: const Text(
                       'Send',
